@@ -164,15 +164,6 @@ class InstallCommand extends Command
         return true;
     }
 
-
-
-
-
-
-
-
-
-
     private function licenseKeyValidator(string $licenseKey): bool
     {
         $verification = $this->verification->verify($licenseKey);
