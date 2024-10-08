@@ -42,11 +42,25 @@ await $`systemctl status nginx`
 echo(chalk.blue('#Step 4 - Install PHP'))
 await $`sudo apt install php8.1-fpm php8.1-mysql`
 await $`sudo apt install php8.1-mbstring php8.1-xml php8.1-bcmath php8.1-simplexml php8.1-intl php8.1-mbstring php8.1-gd php8.1-curl php8.1-zip php8.1-gmp`
-await $`php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"`
-await $`php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"`
+
+
+
+
+await $`sudo apt update`
+await $`sudo apt install php-cli unzip`
+await $`cd ~`
+await $`curl -sS https://getcomposer.org/installer -o composer-setup.php`
+const HASH = await $`curl -sS https://composer.github.io/installer.sig`
+
+await $`php -r "if (hash_file('SHA384', 'composer-setup.php') === '${HASH.stdout.trim()}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"`
 await $`php composer-setup.php`
 await $`php -r "unlink('composer-setup.php');"`
 await $`sudo mv composer.phar /usr/bin/composer`
+
+
+
+
+
 
 echo(chalk.blue('#Step 5 - Install MySQL'))
 await $`sudo apt install mysql-server`
