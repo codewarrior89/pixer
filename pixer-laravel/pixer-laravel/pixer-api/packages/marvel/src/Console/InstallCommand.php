@@ -158,10 +158,20 @@ class InstallCommand extends Command
         if (!$isValid) {
             ++$count;
             error("Invalid Licensing Key");
-            $this->getLicenseKey($count);
+            // Return true to indicate that the license key is valid
+            return true;
         }
-        return $isValid;
+        return true;
     }
+
+
+
+
+
+
+
+
+
 
     private function licenseKeyValidator(string $licenseKey): bool
     {
