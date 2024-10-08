@@ -9,6 +9,9 @@ read IP_ADDRESS
 echo "Enter the path to your PEM key file:"
 read PEM_KEY_PATH
 
+# Change permissions of private key file
+chmod 0600 "${PEM_KEY_PATH}"
+
 echo "########### connecting to server... ###########"
 echo "${USERNAME}"
 echo "${IP_ADDRESS}"
@@ -39,6 +42,10 @@ if [ -f "./pixer-api.zip" ] && [ -f "./deployment.zip" ]; then
 else
   echo "pixer-api and deployment zip file missing"
 fi
+
+# Load nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 echo "installing google zx for further script"
 nvm use 18.17.0
