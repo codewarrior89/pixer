@@ -1,13 +1,20 @@
-#! /bin/bash
+#!/bin/bash
 
-echo "Enter your server username (ex: ubuntu)"
-read username
-echo "Enter server ip address (ex: 11.111.111.11)"
-read ip_address
+echo "Enter your server username (e.g. ubuntu):"
+read USERNAME
+
+echo "Enter your server IP address (e.g. 3.110.50.121):"
+read IP_ADDRESS
+
+echo "Enter the path to your PEM key file:"
+read PEM_KEY_PATH
+
 echo "########### connecting to server... ###########"
-echo "${username}"
-echo "${ip_address}"
-ssh -o StrictHostKeyChecking=no -l "${username}" "${ip_address}" "sudo mkdir -p /var/www/pixer-laravel;sudo chown -R \$USER:\$USER /var/www; sudo apt install zip unzip";
+echo "${USERNAME}"
+echo "${IP_ADDRESS}"
+
+# Create directories and install zip and unzip on the server
+ssh -i "${PEM_KEY_PATH}" -o StrictHostKeyChecking=no "${USERNAME}@${IP_ADDRESS}" "sudo mkdir -p /var/www/pixer-laravel;sudo chown -R \$USER:\$USER /var/www; sudo apt install zip unzip"
 
 if [ -d "./pixer-api" ]; then
   echo 'Zipping pixer-api folder'
@@ -20,24 +27,22 @@ if [ -d "./deployment" ]; then
 fi
 
 if [ -f "./pixer-api.zip" ] && [ -f "./deployment.zip" ]; then
-    # echo "Enter your pixer-api.zip file path"
-    # read api_source_path
-    echo "Uploading pixer-api.zip to server"
-    scp "./pixer-api.zip" "${username}@${ip_address}:/var/www/pixer-laravel"
-    echo "uploaded pixer-api.zip to server"
-    ssh -o StrictHostKeyChecking=no -l "${username}" "${ip_address}" "unzip /var/www/pixer-laravel/pixer-api.zip -d /var/www/pixer-laravel";
+  echo "Uploading pixer-api.zip to server"
+  scp -i "${PEM_KEY_PATH}" "./pixer-api.zip" "${USERNAME}@${IP_ADDRESS}:/var/www/pixer-laravel"
+  echo "uploaded pixer-api.zip to server"
+  ssh -i "${PEM_KEY_PATH}" -o StrictHostKeyChecking=no "${USERNAME}@${IP_ADDRESS}" "unzip /var/www/pixer-laravel/pixer-api.zip -d /var/www/pixer-laravel"
 
-    # echo "Enter your deployment.zip file path"
-    # read deployment_source_path
-    echo 'Uploading deployment.zip to server...'
-    scp "./deployment.zip" "${username}@${ip_address}:/var/www/pixer-laravel"
-    echo 'uploaded deployment.zip to server'
-    ssh -o StrictHostKeyChecking=no -l "${username}" "${ip_address}" "unzip /var/www/pixer-laravel/deployment.zip -d /var/www/pixer-laravel";
+  echo 'Uploading deployment.zip to server...'
+  scp -i "${PEM_KEY_PATH}" "./deployment.zip" "${USERNAME}@${IP_ADDRESS}:/var/www/pixer-laravel"
+  echo 'uploaded deployment.zip to server'
+  ssh -i "${PEM_KEY_PATH}" -o StrictHostKeyChecking=no "${USERNAME}@${IP_ADDRESS}" "unzip /var/www/pixer-laravel/deployment.zip -d /var/www/pixer-laravel"
 else
   echo "pixer-api and deployment zip file missing"
 fi
 
 echo "installing google zx for further script"
+nvm use 18.17.0
+npm install -g npm@latest
 npm i -g zx
 
 echo "Congrats, All the deployment script and api files uploaded to the server."
