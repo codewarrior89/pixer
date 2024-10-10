@@ -43,13 +43,18 @@ else
   echo "pixer-api and deployment zip file missing"
 fi
 
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+source ~/.bashrc
+
 # Load nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 echo "installing google zx for further script"
+nvm install 18.17.0
 nvm use 18.17.0
 npm install -g npm@latest
-npm i -g zx
+npm i zx
 
 echo "Congrats, All the deployment script and api files uploaded to the server."
